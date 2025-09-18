@@ -1,0 +1,90 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: networkglobaldb
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: network_globaldb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d network_globaldb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - social-net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: network_global_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - social-net
+
+  auth:
+    build: ./auth-service          # ← ruta a la carpeta auth-service
+    container_name: auth_service
+    env_file:
+      - ./auth-service/.env        # el .env del servicio
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: network_globaldb
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3001:3001"
+    networks:
+      - social-net
+
+  posts:
+    build: ./posts-service         # ← ruta a tu carpeta posts-service
+    container_name: posts_service
+    env_file:
+      - ./posts-service/.env
+    environment:
+      DB_HOST: db                  # importante: host interno es "db"
+      DB_PORT: 5432
+      DB_NAME: network_globaldb
+
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3002:3002"
+    networks:
+      - social-net
+
+  # (Opcional) Frontend Vite
+  frontend:
+    build: ./frontend              # ← ruta a tu carpeta frontend
+    container_name: frontend_app
+    environment:
+      VITE_AUTH_URL: http://localhost:3001
+      VITE_POSTS_URL: http://localhost:3002
+    ports:
+      - "5173:5173"
+    depends_on:
+      - auth
+      - posts
+    networks:
+      - social-net
+
+networks:
+  social-net:
+    driver: bridge

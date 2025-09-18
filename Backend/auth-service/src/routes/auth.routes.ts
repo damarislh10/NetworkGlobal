@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { register, login } from "../controllers/auth.controller";
+import express from 'express';
 
 const router = Router();
+router.use(express.json());
 
 /**
  * @openapi

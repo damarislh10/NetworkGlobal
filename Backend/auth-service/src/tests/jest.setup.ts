@@ -15,8 +15,7 @@ beforeEach(async () => {
     const repo = AppDataSource.getRepository(User);
     await repo.clear(); // <-- en vez de: await repo.delete({})
   } catch (e: any) {
-    // En caso de que la tabla aún no exista al primer run (raro con synchronize:true),
-    // ignora el error "relation does not exist" de Postgres (42P01)
+
     if (e?.code !== "42P01") throw e;
   }
 });

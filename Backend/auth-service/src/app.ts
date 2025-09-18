@@ -5,11 +5,11 @@ import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./swagger";
+import cors from 'cors';
 
 
 
 const app = express();
-export default app;
 
 // Swagger
 app.use(
@@ -19,12 +19,14 @@ app.use(
     explorer: true,
     customSiteTitle: "Service Auth - Documentation",
     swaggerOptions: {
-      docExpansion: "list",         // como en el pantallazo
+      docExpansion: "list",     
       tagsSorter: "alpha",
       operationsSorter: "method",
     },
   })
 );
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 // Rutas
 app.use("/auth", authRoutes);
@@ -35,3 +37,4 @@ AppDataSource.initialize().then(() => {
   console.log("DB conectada");
   app.listen(3001, () => console.log("Auth service en puerto 3001"));
 });
+export default app;

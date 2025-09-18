@@ -48,6 +48,7 @@ export const register = async (req: Request, res: Response) => {
       message: "Usuario creado",
     });
   } catch (err) {
+    console.log(err);
     res
       .status(500)
       .json({ statusCode: 500, message: "Servicio no disponible" });
@@ -58,6 +59,7 @@ const secret = process.env.JWT_SECRET;
 
 export const login = async (req: Request, res: Response) => {
   try {
+    console.log(req.body);
     const { email, password } = req.body;
     const user = await userRepo.findOne({ where: { email } });
     if (!user)
@@ -81,6 +83,7 @@ export const login = async (req: Request, res: Response) => {
     );
     res.json({ token });
   } catch (err) {
+    console.log(err);
     res
       .status(500)
       .json({ statusCode: 500, message: "Servicio no disponible" });

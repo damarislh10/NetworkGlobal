@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { getProfile } from "../controllers/user.controller";
+import express from 'express';
 
 const router = Router();
+router.use(express.json());
 
 /**
  * @openapi
