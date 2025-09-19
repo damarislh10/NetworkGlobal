@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@store/autenticacion/auth'
-import { apiAuth } from '@lib/axios'
 import { useNavigate } from 'react-router-dom'
 import Layout from '@components/layout/Layout'
+import { useLoginHandler } from 'hooks/useLoginHandler.tsx'
 
 export default function Login(){
   const { token, setToken, setUser } = useAuthStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+
   const navigate = useNavigate()
-  const didRedirect = useRef(false) // evita doble navegación en StrictMode
+  const didRedirect = useRef(false)
+  const { handle, loading, error } = useLoginHandler(email, password, setToken, setUser)
 
   useEffect(() => {
     if (!token || didRedirect.current) return
@@ -19,21 +19,7 @@ export default function Login(){
     navigate('/')
   }, [token, navigate])
 
-  const handle = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
-    try {
-      const { data } = await apiAuth.post('/auth/login', { email, password })
-      setToken(data.token)
-      const me = await apiAuth.get('/user/profile')
-      setUser(me.data.data)
-      // 👇 ya NO navegamos aquí; lo hará el effect cuando vea token
-      // navigate('/')
-    } catch (e: any) {
-      setError(e?.response?.data?.message || 'Error al iniciar sesión')
-    } finally { setLoading(false) }
-  }
+
   return (
     <div className="mx-auto max-w-md mt-16">
       <Layout>
