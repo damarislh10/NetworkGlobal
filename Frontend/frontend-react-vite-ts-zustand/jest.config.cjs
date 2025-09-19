@@ -3,6 +3,7 @@ module.exports = {
     preset: 'ts-jest/presets/default-esm',
     testEnvironment: 'jsdom',
     extensionsToTreatAsEsm: ['.ts', '.tsx'],
+    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
     transform: {
         '^.+\\.(ts|tsx)$': ['ts-jest', { useESM: true }],
     },
@@ -14,6 +15,7 @@ module.exports = {
         '^@store/(.*)$': '<rootDir>/src/store/$1',
         '^@styles/(.*)$': '<rootDir>/src/styles/$1',
         '^@assets/(.*)$': '<rootDir>/src/assets/$1',
+        '^@hooks/(.*)$': '<rootDir>/src/hooks/$1',
     },
     // Si usas TypeScript:
     preset: 'ts-jest',

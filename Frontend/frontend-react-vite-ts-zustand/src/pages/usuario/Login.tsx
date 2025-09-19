@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@store/autenticacion/auth'
 import { useNavigate } from 'react-router-dom'
 import Layout from '@components/layout/Layout'
-import { useLoginHandler } from 'hooks/useLoginHandler.tsx'
+import { useLoginHandler } from '@hooks/useLoginHandler.tsx'
 
 export default function Login(){
   const { token, setToken, setUser } = useAuthStore()
