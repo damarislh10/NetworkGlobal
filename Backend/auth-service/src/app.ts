@@ -1,15 +1,19 @@
 import "reflect-metadata";
 import express from "express";
-import { AppDataSource } from "./config/data-source";
-import authRoutes from "./routes/auth.routes";
-import userRoutes from "./routes/user.routes";
+import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./swagger";
-import cors from 'cors';
 
-
+import authRoutes from "./routes/auth.routes";
+import userRoutes from "./routes/user.routes";
 
 const app = express();
+
+// Body parsers (¡esto arregla req.body undefined!)
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(cors());
 
 // Swagger
 app.use(
@@ -19,22 +23,15 @@ app.use(
     explorer: true,
     customSiteTitle: "Service Auth - Documentation",
     swaggerOptions: {
-      docExpansion: "list",     
+      docExpansion: "list",
       tagsSorter: "alpha",
       operationsSorter: "method",
     },
   })
 );
-app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 
 // Rutas
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 
-// DB
-AppDataSource.initialize().then(() => {
-  console.log("DB conectada");
-  app.listen(3001, () => console.log("Auth service en puerto 3001"));
-});
 export default app;

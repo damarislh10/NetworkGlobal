@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "seed": "tsx src/seeds/seed.ts",
-    "dev": "tsx src/app.ts",
+    "dev": "tsx src/server.ts",
     "test": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=.env.test jest --runInBand",
     "test:watch": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=.env.test jest --watch",
     "test:cov": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=.env.test jest --coverage",
-    "build": "tsc"
+    "build": "tsc -p .",
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",

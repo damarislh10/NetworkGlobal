@@ -1,27 +1,29 @@
 import "reflect-metadata";
+import path from "path";
+import dotenv from "dotenv";
 import { AppDataSource } from "../config/data-source";
 import { User } from "../entity/User";
+
+dotenv.config({ path: path.resolve(__dirname, "../../.env.test") });
 
 jest.setTimeout(30_000);
 
 beforeAll(async () => {
-  if (!AppDataSource.isInitialized) {
-    await AppDataSource.initialize();
-  }
+  if (AppDataSource.isInitialized) await AppDataSource.destroy();
+  AppDataSource.setOptions({
+    database: process.env.DB_NAME,
+    synchronize: true,
+    dropSchema: true,   // ← limpio en cada corrida
+    entities: [User],
+  });
+  await AppDataSource.initialize();
 });
 
-beforeEach(async () => {
-  try {
-    const repo = AppDataSource.getRepository(User);
-    await repo.clear(); // <-- en vez de: await repo.delete({})
-  } catch (e: any) {
-
-    if (e?.code !== "42P01") throw e;
-  }
+afterEach(() => {
+  jest.restoreAllMocks();
+  jest.clearAllMocks();
 });
 
 afterAll(async () => {
-  if (AppDataSource.isInitialized) {
-    await AppDataSource.destroy();
-  }
+  if (AppDataSource.isInitialized) await AppDataSource.destroy();
 });
