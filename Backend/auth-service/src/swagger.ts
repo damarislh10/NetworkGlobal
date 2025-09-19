@@ -4,7 +4,7 @@ export const swaggerSpec = swaggerJSDoc({
   definition: {
     openapi: "3.0.3",
     info: {
-      title: "My REST API - Documentation",
+      title: "Servicio Autenticación - Documentation",
       version: "1.0.0",
       description:
         "Auth Service para la red social. Registro, login y perfil.\nIncluye respuestas estandarizadas y JWT Bearer.",

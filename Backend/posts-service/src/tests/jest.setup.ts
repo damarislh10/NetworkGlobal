@@ -4,6 +4,7 @@ import { AppDataSource } from "../config/data-source";
 jest.setTimeout(30_000);
 
 beforeAll(async () => {
+
   if (!AppDataSource.isInitialized) {
     await AppDataSource.initialize();
     const { ensureProcedures } = await import("../db/initProcedures");
