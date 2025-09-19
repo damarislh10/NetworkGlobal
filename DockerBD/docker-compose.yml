@@ -53,12 +53,12 @@ services:
       - social-net
 
   posts:
-    build: ./posts-service         # ← ruta a tu carpeta posts-service
+    build: ./posts-service         # ← ruta a la carpeta posts-service
     container_name: posts_service
     env_file:
       - ./posts-service/.env
     environment:
-      DB_HOST: db                  # importante: host interno es "db"
+      DB_HOST: db                  # host interno es "db"
       DB_PORT: 5432
       DB_NAME: network_globaldb
 
