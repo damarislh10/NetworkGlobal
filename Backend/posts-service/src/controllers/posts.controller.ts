@@ -6,9 +6,7 @@ export const createPost = async (req: Request, res: Response) => {
     const userId = (req as any).user?.id as string;
     const { message } = req.body || {};
     if (!message || !String(message).trim()) {
-      return res
-        .status(400)
-        .json({ statusCode: 400, message: "Datos incompletos" });
+      return res.status(400).json({ statusCode: 400, message: "Datos incompletos" });
     }
 
     const r = await AppDataSource.manager.query(
@@ -16,6 +14,14 @@ export const createPost = async (req: Request, res: Response) => {
       [userId, message]
     );
     const created = r?.[0];
+
+    const [author] = await AppDataSource.manager.query(
+      `SELECT u."alias" AS "authorAlias",
+              (u."firstName" || ' ' || u."lastName") AS "authorName"
+       FROM users u WHERE u.id = $1`,
+      [userId]
+    );
+
     return res.status(201).json({
       statusCode: 201,
       message: "Post creado",
@@ -24,13 +30,13 @@ export const createPost = async (req: Request, res: Response) => {
         userId: created?.user_id,
         message: created?.message,
         createdAt: created?.created_at,
+        authorAlias: author?.authorAlias ?? null,
+        authorName: author?.authorName ?? null
       },
     });
   } catch (e) {
     console.error("createPost error:", e);
-    return res
-      .status(500)
-      .json({ statusCode: 500, message: "Servicio no disponible" });
+    return res.status(500).json({ statusCode: 500, message: "Servicio no disponible" });
   }
 };
 
@@ -38,9 +44,7 @@ export const listPosts = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id as string;
     if (!userId) {
-      return res
-        .status(401)
-        .json({ statusCode: 401, message: "No autorizado " });
+      return res.status(401).json({ statusCode: 401, message: "No autorizado" });
     }
 
     const rows = await AppDataSource.manager.query(
@@ -51,8 +55,11 @@ export const listPosts = async (req: Request, res: Response) => {
         p.message,
         p.created_at AS "createdAt",
         COALESCE(lc.cnt, 0)::int AS "likes",
-        CASE WHEN lm.user_id IS NULL THEN false ELSE true END AS "likedByMe"
+        CASE WHEN lm.user_id IS NULL THEN false ELSE true END AS "likedByMe",
+        u."alias" AS "authorAlias",
+        (u."firstName" || ' ' || u."lastName") AS "authorName"
       FROM posts p
+      JOIN users u ON u.id = p.user_id
       LEFT JOIN (
         SELECT post_id, COUNT(*)::int AS cnt
         FROM likes
@@ -68,9 +75,7 @@ export const listPosts = async (req: Request, res: Response) => {
     return res.status(200).json({ statusCode: 200, message: "OK", data: rows });
   } catch (e) {
     console.error("listPosts error:", e);
-    return res
-      .status(500)
-      .json({ statusCode: 500, message: "Servicio no disponible" });
+    return res.status(500).json({ statusCode: 500, message: "Servicio no disponible" });
   }
 };
 

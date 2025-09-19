@@ -1,16 +1,8 @@
 import { create } from 'zustand'
 import { apiPosts } from '@lib/axios'
 import { getSocket } from '@lib/socket'
-import type { Post } from '@models/Publicacion'
+import { PostsState } from 'types/post.interface'
 
-interface PostsState {
-  items: Post[]
-  loading: boolean
-  fetch: () => Promise<void>
-  create: (message: string) => Promise<void>
-  toggleLike: (id: string) => Promise<void>
-  bindRealtime: () => void
-}
 
 export const usePostsStore = create<PostsState>((set, get) => ({
   items: [],

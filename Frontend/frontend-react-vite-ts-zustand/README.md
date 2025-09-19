@@ -7,7 +7,7 @@
   - Posts: http://localhost:3002
 
 ## Configuración
-1. Copia `.env.example` a `.env` y ajusta URLs si es necesario.
+1. Copia `.env.development` a `.env` y ajustar URLs si es necesario.
 2. Instala deps:
    ```bash
    npm i

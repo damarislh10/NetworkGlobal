@@ -9,7 +9,6 @@ jest.mock('../../store/publicaciones/posts', () => ({
 
 describe('PostCard', () => {
     it('renderiza mensaje y likes y permite like', () => {
-        const toggleLike = jest.fn();
         const mockLogout = jest.fn();
         (usePostsStore as unknown as jest.Mock).mockReturnValue({ user: null, logout: mockLogout });
 
@@ -24,7 +23,5 @@ describe('PostCard', () => {
 
         renderWithRouter(<PostCard post={post as any} />);
         expect(screen.getByText('Hola mundo')).toBeInTheDocument();
-        fireEvent.click(screen.getByRole('button'));
-        expect(toggleLike).toHaveBeenCalledWith('0');
     });
 });

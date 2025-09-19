@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@store/autenticacion/auth'
 import { apiAuth } from '@lib/axios'
 import { useNavigate } from 'react-router-dom'
@@ -11,10 +11,13 @@ export default function Login(){
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
+  const didRedirect = useRef(false) // evita doble navegación en StrictMode
 
   useEffect(() => {
-    if (token) navigate('/')
-  }, [token])
+    if (!token || didRedirect.current) return
+    didRedirect.current = true
+    navigate('/')
+  }, [token, navigate])
 
   const handle = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,12 +28,12 @@ export default function Login(){
       setToken(data.token)
       const me = await apiAuth.get('/user/profile')
       setUser(me.data.data)
-      navigate('/')
+      // 👇 ya NO navegamos aquí; lo hará el effect cuando vea token
+      // navigate('/')
     } catch (e: any) {
       setError(e?.response?.data?.message || 'Error al iniciar sesión')
     } finally { setLoading(false) }
   }
-
   return (
     <div className="mx-auto max-w-md mt-16">
       <Layout>

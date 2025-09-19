@@ -1,21 +1,7 @@
+import { AuthState } from 'types/auth.interface'
 import { create } from 'zustand'
 
-type User = {
-  id: string
-  firstName: string
-  lastName: string
-  birthDate: string
-  alias: string
-  email: string
-}
 
-type AuthState = {
-  token: string | null
-  user: User | null
-  setToken: (t: string | null) => void
-  setUser: (u: User | null) => void
-  logout: () => void
-}
 
 export const useAuthStore = create<AuthState>((set) => ({
   token: typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null,
