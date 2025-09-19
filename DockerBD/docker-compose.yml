@@ -72,11 +72,14 @@ services:
 
   # (Opcional) Frontend Vite
   frontend:
-    build: ./frontend              # ← ruta a tu carpeta frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: frontend_app
     environment:
-      VITE_AUTH_URL: http://localhost:3001
-      VITE_POSTS_URL: http://localhost:3002
+      # Estas variables las lee Vite en tiempo de build/dev
+      VITE_AUTH_API: http://localhost:3001
+      VITE_POSTS_API: http://localhost:3002
     ports:
       - "5173:5173"
     depends_on:

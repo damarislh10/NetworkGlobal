@@ -59,7 +59,6 @@ export const listPosts = async (req: Request, res: Response) => {
         GROUP BY post_id
       ) lc ON lc.post_id = p.id
       LEFT JOIN likes lm ON lm.post_id = p.id AND lm.user_id = $1
-      WHERE p.user_id <> $1
       ORDER BY p.created_at DESC
       LIMIT 50;
       `,
